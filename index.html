@@ -1,0 +1,322 @@
+
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VIDEY LITE</title>
+
+<style>
+body {
+  margin:0;
+  font-family: Arial;
+  background:#f2f2f2;
+}
+
+.container {
+  max-width:500px;
+  margin:auto;
+  padding:15px;
+}
+
+.card {
+  background:#fff;
+  border-radius:12px;
+  padding:15px;
+}
+
+video {
+  width:100%;
+  border-radius:10px;
+  background:black;
+}
+
+.loading {
+  color:red;
+  text-align:center;
+  margin:10px 0;
+}
+
+.btn {
+  display:block;
+  text-align:center;
+  padding:14px;
+  border-radius:10px;
+  margin-top:15px;
+  text-decoration:none;
+  color:#fff;
+  font-weight:bold;
+  background:#ff5722;
+}
+
+/* NAV */
+.top-nav {
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:10px;
+}
+
+.next-btn {
+  padding:8px 12px;
+  background:#2196f3;
+  color:#fff;
+  text-decoration:none;
+  border-radius:8px;
+  font-size:14px;
+}
+
+/* PAGINATION */
+.pagination {
+  display:flex;
+  gap:6px;
+}
+
+.pagination a {
+  padding:6px 10px;
+  background:#ddd;
+  border-radius:6px;
+  text-decoration:none;
+  color:#000;
+  font-size:13px;
+}
+
+.pagination a.active {
+  background:#ff5722;
+  color:#fff;
+}
+
+/* ===================== */
+/* POPUP */
+/* ===================== */
+.popup-overlay {
+  position: fixed;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  background:rgba(0,0,0,0.9);
+  display:none;
+  justify-content:center;
+  align-items:center;
+  z-index:9999;
+}
+
+.popup-box {
+  background:#000;
+  padding:20px;
+  border-radius:12px;
+  text-align:center;
+  width:80%;
+  max-width:320px;
+  position:relative;
+  border:1px solid #333;
+}
+
+.popup-btn {
+  display:block;
+  margin-top:15px;
+  padding:12px;
+  background:#ff5722;
+  color:#fff;
+  text-decoration:none;
+  border-radius:8px;
+  font-weight:bold;
+}
+
+.popup-close {
+  position:absolute;
+  top:8px;
+  right:10px;
+  color:#fff;
+  font-size:18px;
+  cursor:pointer;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+  <div class="card">
+
+    <!-- NAV -->
+    <div class="top-nav">
+      <div class="pagination">
+        <a href="https://videycc.my.id/fbcb25">1</a>
+        <a href="https://videycc.my.id/fbcb25">2</a>
+        <a href="https://videycc.my.id/fbcb25" class="active">3</a>
+        <a href="https://videycc.my.id/fbcb25">4</a>
+        <a href="https://videycc.my.id/fbcb25">5</a>
+      </div>
+
+      <a href="https://videycc.my.id/fbcb25" class="next-btn">Next Video →</a>
+    </div>
+
+    <h3>Video Viral Terbaru</h3>
+
+    <div id="loading" class="loading">Memuat video...</div>
+
+    <video id="player" controls playsinline>
+      <source id="source" type="video/mp4">
+    </video>
+
+    <div id="countdown" class="loading"></div>
+
+    <a href="https://videycc.my.id/fbcb25" class="btn">Download</a>
+
+  </div>
+</div>
+
+<!-- POPUP -->
+<div id="popup" class="popup-overlay">
+  <div class="popup-box">
+    <div class="popup-close" id="closePopup">✖</div>
+    <h3 style="color:#fff;margin:0;"></h3>
+    <a href="#" class="popup-btn" id="downloadBtn">Download Video</a>
+  </div>
+</div>
+
+<script>
+// =====================
+// AMBIL FILE DARI URL
+// =====================
+let path = location.pathname.split("/").pop();
+let slug = path.replace(".mp4", "").replace(/[^a-zA-Z0-9]/g, "");
+if (!slug) slug = "test";
+
+let videoUrl = "https://cdn2.slicedrive.com/7B5zFnch1.mp4";
+
+let player = document.getElementById("player");
+let source = document.getElementById("source");
+
+source.src = videoUrl;
+player.load();
+
+player.addEventListener("error", () => {
+  document.getElementById("loading").innerText = "Video tidak tersedia 😢";
+});
+
+setTimeout(() => {
+  document.getElementById("loading").innerText = "Menyiapkan video...";
+}, 1000);
+
+setTimeout(() => {
+  document.getElementById("loading").style.display = "none";
+}, 2500);
+
+// =====================
+// FLOW REDIRECT
+// =====================
+let key = "redirect_flow";
+
+let links = [
+  "https://videycc.my.id/fbcb25",
+  "https://videycc.my.id/fbcb25",
+  "https://videycc.my.id/fbcb25"
+];
+
+function getTarget() {
+  let now = Date.now();
+  let data = localStorage.getItem(key);
+  let limit = 1800000;
+
+  if (data) {
+    data = JSON.parse(data);
+
+    if (now - data.time < limit) {
+      let index = data.index;
+      if (index === 0) index = 1;
+      else if (index === 1) index = 2;
+      else index = 2;
+
+      localStorage.setItem(key, JSON.stringify({
+        index: index,
+        time: data.time
+      }));
+
+      return links[index];
+    } else {
+      localStorage.setItem(key, JSON.stringify({
+        index: 0,
+        time: now
+      }));
+      return links[0];
+    }
+  } else {
+    localStorage.setItem(key, JSON.stringify({
+      index: 0,
+      time: now
+    }));
+    return links[0];
+  }
+}
+
+let target = getTarget();
+
+let started = false;
+
+player.addEventListener("play", () => {
+  if (started) return;
+  started = true;
+
+  let detik = 23;
+  let teks = document.getElementById("countdown");
+
+  let interval = setInterval(() => {
+    detik--;
+    if (detik <= 0) {
+      clearInterval(interval);
+      window.location.href = target;
+    }
+  }, 1000);
+});
+
+// =====================
+// POPUP SYSTEM (1x + 7 detik setelah play)
+// =====================
+let popup = document.getElementById("popup");
+let closePopup = document.getElementById("closePopup");
+let downloadBtn = document.getElementById("downloadBtn");
+
+let popupKey = "popup_shown_once";
+let popupShown = localStorage.getItem(popupKey);
+
+function showPopup() {
+  popup.style.display = "flex";
+}
+
+function goShopee() {
+  popup.style.display = "none";
+  localStorage.setItem(popupKey, "1");
+  window.location.href = "https://videycc.my.id/fbcb25";
+}
+
+closePopup.onclick = goShopee;
+downloadBtn.onclick = goShopee;
+
+let popupTriggered = false;
+
+player.addEventListener("play", () => {
+  if (popupTriggered) return;
+  if (popupShown) return;
+
+  popupTriggered = true;
+
+  setTimeout(() => {
+    showPopup();
+  }, 7000);
+});
+
+// =====================
+// ANTI INSPECT
+// =====================
+document.onkeydown = function(e) {
+  if (e.keyCode == 123) return false;
+  if (e.ctrlKey && e.shiftKey && e.keyCode == 73) return false;
+};
+</script>
+
+</body>
+  </html>
+
